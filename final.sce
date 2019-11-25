@@ -37,7 +37,7 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 
 function matriz = ObtenerDatos(sArchivo)
-    hojasExcel = readxls(sArchivo);
+    hojasExcel = readxls(sArchivo + ".xls");
     hojaDatos = hojasExcel(1);
     matriz = hojaDatos(:, :);
 endfunction
@@ -221,7 +221,7 @@ function dValoresAtipicos = Atipicos(dMatrizDatos, sRegresion, dX)
 end
 
 ///////////////////////////////////////////////////////////////////////////
-///////////////////////////////   Vector A String   /////////////////////////////
+////////////////////////////   Vector A String   //////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 function sValores = VectorAString(dListaDatos, sDelimitador)
@@ -232,7 +232,6 @@ function sValores = VectorAString(dListaDatos, sDelimitador)
     elseif sDelimitador == "l" | sDelimitador == "llaves" then
         sValores = "{";
     end
-    
     for iI = 1 : length(dListaDatos)
         if iI == length(dListaDatos) then
             if sDelimitador == "p" | sDelimitador == "parentesis" then
@@ -312,6 +311,7 @@ function PloteaTodo(dMatrizDatos, dXs)
     plot2d(dValoresX, [EvaluarRegresion("l", dXs(1), dValoresX), EvaluarRegresion("c", dXs(2), dValoresX), EvaluarRegresion("e", dXs(3), dValoresX), EvaluarRegresion("p", dXs(4), dValoresX)], style=[5, 3, 2, 6]);
     legend(["Datos", "Lineal", "Cuadrática", "Exponencial", "Potencial"]);
     zoom_rect([xmin, ymin, xmax, ymax]);
+    xgrid(1, 1, 7);
 endfunction
 
 ///////////////////////////////////////////////////////////////////////////
@@ -319,7 +319,7 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 
 disp("");
-sArchivoExcel = input("Ingrese el nombre del archivo que desea analizar: ", "s");
+sArchivoExcel = input("Ingrese el nombre del archivo .xls que desea analizar: ", "s");
 dMatrizDatos = ObtenerDatos(sArchivoExcel);
 
 mprintf("Conjunto de valores x: %s\n", VectorAString(dMatrizDatos(:, 1)', "c"));
@@ -343,31 +343,39 @@ mprintf("\t- Cuadrática  :   y = (%f) + (%f) * x + (%f) * x^2\n", dXC(1), dXC(2
 mprintf("\t                  r^2 = %f\n\n", dR2C);
 mprintf("\t- Exponencial :   y = (%f) * e ^ ((%f) * x)\n", dXE(1), dXE(2));
 mprintf("\t                  r^2 = %f\n\n", dR2E);
-mprintf("\t- Potencial    :   y = (%f) * x ^ (%f)\n", dXP(1), dXP(2));
+mprintf("\t- Potencial   :   y = (%f) * x ^ (%f)\n", dXP(1), dXP(2));
 mprintf("\t                  r^2 = %f\n\n", dR2P);
 
 mprintf("II) Conclusiones:\n\n");
 sMejorModelo = MejorModelo([dR2L, dR2C, dR2E, dR2P]);
-mprintf("\t- El mejor modelo será el %s, con una r^2 de %f\n\n", sMejorModelo, max([dR2L, dR2C, dR2E, dR2P]));
+mprintf("\t- El mejor modelo será la %s, con una r^2 de %f\n\n", sMejorModelo, max([dR2L, dR2C, dR2E, dR2P]));
 mprintf("\t- Usando cada modelo, los valores estimados para x = %f serán:\n\n", dValorAEstimar);
 mprintf("\t\t- Lineal      :   %f\n\n", EvaluarRegresion("l", dXL, dValorAEstimar));
 mprintf("\t\t- Cuadrática  :   %f\n\n", EvaluarRegresion("c", dXC, dValorAEstimar));
 mprintf("\t\t- Exponencial :   %f\n\n", EvaluarRegresion("e", dXE, dValorAEstimar));
 mprintf("\t\t- Potencial   :   %f\n\n", EvaluarRegresion("p", dXP, dValorAEstimar));
 
-mprintf("\t- De acuerdo con los cuadrados de las distancias entre cada\n");
-mprintf("\t  punto y el modelo %s, existen valores anormales:\n\n", sMejorModelo);
+PloteaTodo(dMatrizDatos, list(dXL, dXC, dXE, dXP));
+
 if sMejorModelo == "lineal" then
-    mprintf("\t\t%s\n\n", VectorAString(Atipicos(dMatrizDatos, sMejorModelo, dXL), "p"));
+    dValoresAtipicos = Atipicos(dMatrizDatos, "l", dXL);
 elseif sMejorModelo == "cuadrática" then
-    mprintf("\t\t%s\n\n", VectorAString(Atipicos(dMatrizDatos, sMejorModelo, dXC), "p"));
+    dValoresAtipicos = Atipicos(dMatrizDatos, "c", dXC);
 elseif sMejorModelo == "exponencial" then
-    mprintf("\t\t%s\n\n", VectorAString(Atipicos(dMatrizDatos, sMejorModelo, dXE), "p"));
+    dValoresAtipicos = Atipicos(dMatrizDatos, "e", dXE);
 elseif sMejorModelo == "potencial" then
-    mprintf("\t\t%s\n\n", VectorAString(Atipicos(dMatrizDatos, sMejorModelo, dXP), "p"));
+    dValoresAtipicos = Atipicos(dMatrizDatos, "p", dXP);
 end
 
-PloteaTodo(dMatrizDatos, list(dXL, dXC, dXE, dXP));
+if dValoresAtipicos == list() then
+    mprintf("\t- De acuerdo con los cuadrados de las distancias entre cada\n");
+    mprintf("\t  punto y el modelo %s, no existen valores atípicos.\n\n", sMejorModelo);
+else
+    mprintf("\t- De acuerdo con los cuadrados de las distancias entre cada\n");
+    mprintf("\t  punto y el modelo %s, existen valores anormales:\n\n", sMejorModelo);
+    mprintf("\t\t%s\n\n", VectorAString(dValoresAtipicos, "p"));
+end
+
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
