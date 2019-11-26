@@ -145,37 +145,51 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 
 function dR2 = R2(dMatrizDatos, sRegresion, dX)
-    iN = size(dMatrizDatos)(1);
-    dYProm = mean(dMatrizDatos(:, 2));
-    dSST = 0;
-    for iI = 1 : iN
-        dSST = dSST + (dMatrizDatos(iI, 2) - dYProm) ^ 2;
-    end
-    
     if sRegresion == "lineal" | sRegresion == "l" then
+        dYProm = mean(dMatrizDatos(:, 2));
+        iN = size(dMatrizDatos)(1);
+        dSST = 0;
+        dSSE = 0;
         for iI = 1 : iN
+            dSST = dSST + (dMatrizDatos(iI, 2) - dYProm) ^ 2;
             dValoresEsperados(iI) = dX(1) + dX(2) * dMatrizDatos(iI, 1);
+            dSSE = dSSE + (dMatrizDatos(iI, 2) - dValoresEsperados(iI)) ^ 2;
         end
+        dR2 = (dSST - dSSE) / dSST;
     elseif sRegresion == "cuadratica" | sRegresion == "c" then
+        dYProm = mean(dMatrizDatos(:, 2));
+        iN = size(dMatrizDatos)(1);
+        dSST = 0;
+        dSSE = 0;
         for iI = 1 : iN
+            dSST = dSST + (dMatrizDatos(iI, 2) - dYProm) ^ 2;
             dValoresEsperados(iI) = dX(1) + dX(2) * dMatrizDatos(iI, 1) + dX(3) * dMatrizDatos(iI, 1) ^ 2;
+            dSSE = dSSE + (dMatrizDatos(iI, 2) - dValoresEsperados(iI)) ^ 2;
         end
+        dR2 = (dSST - dSSE) / dSST;
     elseif sRegresion == "exponencial" | sRegresion == "e" then
+        dLnYProm = mean(log(dMatrizDatos(:, 2)));
+        iN = size(dMatrizDatos)(1);
+        dSST = 0;
+        dSSE = 0;
         for iI = 1 : iN
+            dSST = dSST + (log(dMatrizDatos(iI, 2)) - dLnYProm) ^ 2;
             dValoresEsperados(iI) = dX(1) * %e ^ (dX(2) * dMatrizDatos(iI, 1));
+            dSSE = dSSE + (log(dMatrizDatos(iI, 2)) - log(dValoresEsperados(iI))) ^ 2;
         end
+        dR2 = (dSST - dSSE) / dSST;
     elseif sRegresion == "potencial" | sRegresion == "p" then
+        dYProm = mean(log(dMatrizDatos(:, 2)));
+        iN = size(dMatrizDatos)(1);
+        dSST = 0;
+        dSSE = 0;
         for iI = 1 : iN
+            dSST = dSST + (log(dMatrizDatos(iI, 2)) - dYProm) ^ 2;
             dValoresEsperados(iI) = dX(1) * dMatrizDatos(iI, 1) ^ dX(2);
+            dSSE = dSSE + (log(dMatrizDatos(iI, 2)) - log(dValoresEsperados(iI))) ^ 2;
         end
+        dR2 = (dSST - dSSE) / dSST;
     end
-    
-    dSSE = 0;
-    for iI = 1 : iN
-        dSSE = dSSE + (dMatrizDatos(iI, 2) - dValoresEsperados(iI)) ^ 2;
-    end
-    
-    dR2 = (dSST - dSSE) / dSST;
 endfunction
 
 ///////////////////////////////////////////////////////////////////////////
