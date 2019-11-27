@@ -24,6 +24,18 @@ clear
 //   11 / NOV / 19    version 1.0
 //////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////
+//  Montante
+//
+//  Función que resuelve una matriz por medio
+//  del método de montante
+//
+//   Parametros:
+//      dMatrix      cantidad de renglones de la matriz
+//   Regreza
+//      dX           matriz con los resultados del sistema de ecuaciones
+/////////////////////////////////////////////////////
+
 function dX = Montante(dMatrix)
     iRows = size(dMatrix)(1);
     iCols = size(dMatrix)(2);
