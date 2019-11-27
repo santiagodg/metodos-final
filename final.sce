@@ -229,7 +229,7 @@ function dValoresAtipicos = Atipicos(dMatrizDatos, sRegresion, dX)
     dValoresAtipicos = list();
     if iContadorAtipicos <> 1 then
         for iI = 1 : iContadorAtipicos - 1
-            dValoresAtipicos(iI) = dMatrizDatos(dIndicesAtipicos(iI));
+            dValoresAtipicos(iI) = dMatrizDatos(dIndicesAtipicos(iI), 1);
         end
     end
 end
@@ -394,7 +394,7 @@ mprintf("III) Archivo de salida:\n\n");
 cContinuar = input("        - ¿Desea crear un archivo de salida? (s/n): ", "s");
 if cContinuar == "s" | cContinuar == "S" then
     sArchivo = input("        - ¿Cómo desea que se llame el archivo .csv? ", "s");
-    sRegresion = input("        - ¿Qué regresión desea guardar? (lineal, cuadrática, exponencial o potencial): ", "s");
+    sRegresion = input("        - ¿Qué regresión desea guardar? (lineal, cuadratica, exponencial o potencial): ", "s");
     dLimInf = input("        - Ingrese el límite inferior: ");
     dLimSup = input("        - Ingrese el límite superior: ");
     dPaso = input("        - Ingrese el tamaño del paso: ");
@@ -407,7 +407,7 @@ if cContinuar == "s" | cContinuar == "S" then
             dI = dI + dPaso;
             iI = iI + 1;
         end
-    elseif sRegresion == "cuadrática" | sRegresion == "c" then
+    elseif sRegresion == "cuadratica" | sRegresion == "c" then
         dI = dLimInf;
         iI = 1;
         while dI <= dLimSup
