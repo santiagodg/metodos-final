@@ -538,7 +538,7 @@ if cContinuar == "s" | cContinuar == "S" then
     sRegresion = input("        - ¿Qué regresión desea guardar? (lineal, cuadratica, exponencial o potencial): ", "s");
     dLimInf = input("        - Ingrese el límite inferior: ");
     dLimSup = input("        - Ingrese el límite superior: ");
-    dPaso = input("        - Ingrese el tamaño del paso: ");
+    dPaso = input("        - Ingrese el incremento del intervalo: ");
 
     if sRegresion == "lineal" | sRegresion == "l" then
       dAEvaluar = dXL;
