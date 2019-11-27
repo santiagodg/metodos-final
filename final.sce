@@ -441,6 +441,34 @@ function PloteaTodo(dMatrizDatos, dXs)
     xgrid(1, 1, 7);
 endfunction
 
+//////////////////////////////////////////////////////
+//  creaArchivoSalida
+//
+//  Función que genera el archivo de salida utilizando
+//  los parámetros provistos por el usuario con
+//  la regresion evaluada en el rango seleccionado
+//
+//   Parametros:
+//      sArchivo    nombre del archivo .csv seleccionado
+//      sRegresion  nombre de la regresión seleccionada
+//      dLimInf     límite inferior para evaluar
+//      dLimSup     límite superior para evaluar
+//      dPaso       distancia entre los pasos de la evaluación
+//      dAEvaluar   valores del modelo a evaluar
+/////////////////////////////////////////////////////
+function creaArchivoSalida(sArchivo, sRegresion, dLimInf, dLimSup, dPaso, dAEvaluar)
+  dI = dLimInf;
+  iI = 1;
+  while dI <= dLimSup
+      dMatrizSalida(iI, 1) = dI;
+      dMatrizSalida(iI, 2) = EvaluarRegresion(sRegresion, dAEvaluar, dI);
+      dI = dI + dPaso;
+      iI = iI + 1;
+  end
+  csvWrite(dMatrizSalida, pwd() + "\" + sArchivo + ".csv");
+  mprintf("Se han guardado los datos en %s.\n\n", pwd() + "\" + sArchivo + ".csv");
+endfunction
+
 ///////////////////////////////////////////////////////////////////////////
 /////////////////////////   Programa Principal   //////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -504,51 +532,25 @@ end
 
 mprintf("III) Archivo de salida:\n\n");
 cContinuar = input("        - ¿Desea crear un archivo de salida? (s/n): ", "s");
+
 if cContinuar == "s" | cContinuar == "S" then
     sArchivo = input("        - ¿Cómo desea que se llame el archivo .csv? ", "s");
     sRegresion = input("        - ¿Qué regresión desea guardar? (lineal, cuadratica, exponencial o potencial): ", "s");
     dLimInf = input("        - Ingrese el límite inferior: ");
     dLimSup = input("        - Ingrese el límite superior: ");
     dPaso = input("        - Ingrese el tamaño del paso: ");
+
     if sRegresion == "lineal" | sRegresion == "l" then
-        dI = dLimInf;
-        iI = 1;
-        while dI <= dLimSup
-            dMatrizSalida(iI, 1) = dI;
-            dMatrizSalida(iI, 2) = EvaluarRegresion("l", dXL, dI);
-            dI = dI + dPaso;
-            iI = iI + 1;
-        end
+      dAEvaluar = dxL;
     elseif sRegresion == "cuadratica" | sRegresion == "c" then
-        dI = dLimInf;
-        iI = 1;
-        while dI <= dLimSup
-            dMatrizSalida(iI, 1) = dI;
-            dMatrizSalida(iI, 2) = EvaluarRegresion("c", dXC, dI);
-            dI = dI + dPaso;
-            iI = iI + 1;
-        end
+      dAEvaluar = dxC;
     elseif sRegresion == "exponencial" | sRegresion == "e" then
-        dI = dLimInf;
-        iI = 1;
-        while dI <= dLimSup
-            dMatrizSalida(iI, 1) = dI;
-            dMatrizSalida(iI, 2) = EvaluarRegresion("e", dXE, dI);
-            dI = dI + dPaso;
-            iI = iI + 1;
-        end
-    elseif sRegresion == "potencial" | sRegresion == "potencial" then
-        dI = dLimInf;
-        iI = 1;
-        while dI <= dLimSup
-            dMatrizSalida(iI, 1) = dI;
-            dMatrizSalida(iI, 2) = EvaluarRegresion("p", dXP, dI);
-            dI = dI + dPaso;
-            iI = iI + 1;
-        end
+      dAEvaluar = dxE;
+    elseif sRegresion == "potencial" | sRegresion == "p" then 
+      dAEvaluar = dxP;
     end
-    csvWrite(dMatrizSalida, pwd() + "\" + sArchivo + ".csv");
-    mprintf("Se han guardado los datos en %s.\n\n", pwd() + "\" + sArchivo + ".csv");
+
+    creaArchivoSalida(sArchivo, sRegresion, dLimInf, dLimSup, dPaso, dAEvaluar);
 end
 mprintf("Gracias por usar el programa.");
 
