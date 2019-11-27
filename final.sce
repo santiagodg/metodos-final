@@ -1,8 +1,27 @@
 clear
-
-///////////////////////////////////////////////////////////////////////////
-////////////////////////////    Montante   ////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+//   Final.sce
+// 
+//   Este proyecto genera las siguientes 4
+//   regresiones para un conjunto de pares de
+//   valores independientes y dependientes:
+//
+//   * Lineal
+//   * Cuadrática
+//   * Exponecial
+//   * Potencial
+// 
+//   y propone cuál es el mejor modelo generado
+//   para generar predicciones de datos futuros,
+//   además de indicar posibles datos atípicos
+//   y entregar un archivo de salida con alguno
+//   de los modelos evaluados entre un límite inferior
+//   y superior dependiendo de la regresión
+//   seleccionada por el usuario
+// 
+//   Ernesto Garcia -- A00820783
+//   Santiago Díaz -- A01252554
+//////////////////////////////////////////////////////
 
 function dX = Montante(dMatrix)
     iRows = size(dMatrix)(1);
@@ -32,9 +51,17 @@ function dX = Montante(dMatrix)
     dX = dMatrix(:, iCols)';
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-////////////////////////   Obtener Datos    /////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  Obtener Dats
+//
+//  Función que carga los valores de un archivo
+//  de excel solicitado por el usuario
+//
+//   Parametros:
+//      sArchivo   nombre del archivo
+//   Regresa:
+//      matriz     matriz resultado con los valores del archivo 
+/////////////////////////////////////////////////////
 
 function matriz = ObtenerDatos(sArchivo)
     hojasExcel = readxls(sArchivo + ".xls");
@@ -42,9 +69,18 @@ function matriz = ObtenerDatos(sArchivo)
     matriz = hojaDatos(:, :);
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-////////////////////////   Regresión Lineal    ////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  RegresionLineal
+//
+//  Función que calcula la regresión lineal para
+//  una matriz de datos cargados desde un archivo
+//  de excel
+//
+//   Parametros:
+//      dMatrizDatos  matriz de pares de valores
+//   Regresa:
+//      dX            matriz que contiene los datos de la regresión
+/////////////////////////////////////////////////////
 
 function dX = RegresionLineal(dMatrizDatos)
     // Calcular solucion
@@ -64,9 +100,18 @@ function dX = RegresionLineal(dMatrizDatos)
     dX = Montante(matrizEcuaciones);
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-//////////////////////////  Regresión Cuadrática  /////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  RegresionCuadratica
+//
+//  Función que calcula la regresión cuadrática para
+//  una matriz de datos cargados desde un archivo
+//  de excel
+//
+//   Parametros:
+//      dMatrizDatos  matriz de pares de valores
+//   Regresa:
+//      dX            matriz que contiene los datos de la regresión
+/////////////////////////////////////////////////////
 
 function dX = RegresionCuadratica(dMatrizDatos)
     // Calcular solucion
@@ -94,9 +139,18 @@ function dX = RegresionCuadratica(dMatrizDatos)
 endfunction
 
 
-///////////////////////////////////////////////////////////////////////////
-//////////////////////////  Regresión Exponencial  ////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  RegresionExponencial
+//
+//  Función que calcula la regresión exponencial para
+//  una matriz de datos cargados desde un archivo
+//  de excel
+//
+//   Parametros:
+//      dMatrizDatos  matriz de pares de valores
+//   Regresa:
+//      dX            matriz que contiene los datos de la regresión
+/////////////////////////////////////////////////////
 
 function dX = RegresionExponencial(dMatrizDatos)
     // Calcular solucion
@@ -117,9 +171,19 @@ function dX = RegresionExponencial(dMatrizDatos)
     dX(1) = %e ^ dX(1);
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-//////////////////////////  Regresión Potencia  ///////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  RegresionPotencial
+//
+//  Función que calcula la regresión potencia para
+//  una matriz de datos cargados desde un archivo
+//  de excel
+//
+//   Parametros:
+//      dMatrizDatos  matriz de pares de valores
+//   Regresa:
+//      dX            matriz que contiene los datos de la regresión
+/////////////////////////////////////////////////////
+
 
 function dX = RegresionPotencial(dMatrizDatos)
     // Calcular solucion
@@ -140,9 +204,19 @@ function dX = RegresionPotencial(dMatrizDatos)
     dX(1) = %e ^ dX(1);
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-//////////////////////////////   R Cuadrada   /////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  dR2
+//
+//  Función que calcula r^2 para cada una de los modelos
+//  generados en la regresión
+//
+//   Parametros:
+//      dMatrizDatos  matriz de pares de valores
+//      sRegresion    string que representa el tipo de regresion
+//      dX            matriz que contiene los datos de la regresión
+//   Regresa:
+//      dR2           valor de r^2 para la regresion
+/////////////////////////////////////////////////////
 
 function dR2 = R2(dMatrizDatos, sRegresion, dX)
     if sRegresion == "lineal" | sRegresion == "l" then
@@ -192,9 +266,19 @@ function dR2 = R2(dMatrizDatos, sRegresion, dX)
     end
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-/////////////////////////   Valores Atípicos   ////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  dValoresAtipicos
+//
+//  Función que calcula los valores atípicos
+//  para una regresión dada
+//
+//   Parametros:
+//      dMatrizDatos      matriz de pares de valores
+//      sRegresion        string que representa el tipo de regresion
+//      dX                matriz que contiene los datos de la regresión
+//   Regresa:
+//      dValoresAtípicos  vector con los valores atípicos
+/////////////////////////////////////////////////////
 
 function dValoresAtipicos = Atipicos(dMatrizDatos, sRegresion, dX)
     iN = size(dMatrizDatos)(1);
@@ -234,9 +318,18 @@ function dValoresAtipicos = Atipicos(dMatrizDatos, sRegresion, dX)
     end
 end
 
-///////////////////////////////////////////////////////////////////////////
-////////////////////////////   Vector A String   //////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  VectorAString
+//
+//  Función que convierte un vector a string
+//  para ser mostrado correctamente en pantalla
+//
+//   Parametros:
+//      dListaDatos       vector que se va a convertir en string
+//      sDelimitador      string que representa el delimitador para el string resultante
+//   Regresa:
+//      sValores          string con la representación en string del vector entregado
+/////////////////////////////////////////////////////
 
 function sValores = VectorAString(dListaDatos, sDelimitador)
     if sDelimitador == "p" | sDelimitador == "parentesis" then
@@ -261,9 +354,18 @@ function sValores = VectorAString(dListaDatos, sDelimitador)
     end
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-////////////////////////////   Mejor Modelo   /////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  sMejorModelo
+//
+//  Función que regresa el mejor modelo dentro
+//  generado previamente en la regresiones utilizando
+//  r^2 como parámetro de comparación
+//
+//   Parametros:
+//      dR2             vector que contiene los valores ordenados de r^2
+//   Regresa:
+//      sMejorModelo    string con el nombre del mejor modelo
+/////////////////////////////////////////////////////
 
 function sMejorModelo = MejorModelo(dR2)
     sRegresiones = ["lineal", "cuadrática", "exponencial", "potencial"];
@@ -271,9 +373,20 @@ function sMejorModelo = MejorModelo(dR2)
     sMejorModelo = sRegresiones(k);
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////   EvaluarRegresion   //////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  EvaluarRegresion
+//
+//  Función que evalúa una regresión para un conjunto
+//  de valores de dX, tomando dA como vector de
+//  valores representantes del modelo
+//
+//   Parametros:
+//      sRegresion      tipo de regresión a ejecutar
+//      dA              lista de valores representante del modelo
+//      dX              valores a evaluar
+//   Regresa:
+//      dY              resultado de las evaluaciones para cada valor de dX
+/////////////////////////////////////////////////////
 
 function dY = EvaluarRegresion(sRegresion, dA, dX)
     dY = [];
@@ -296,9 +409,16 @@ function dY = EvaluarRegresion(sRegresion, dA, dX)
     end
 endfunction
 
-///////////////////////////////////////////////////////////////////////////
-////////////////////////////   Plotea Todo   //////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  PloteaTodo
+//
+//  Función que grafica los resultados de las regresiones
+//  y los puntos de el archivo precargado de excel
+//
+//   Parametros:
+//      dMatrizDatos    datos cargados desde el archivo
+//      dXs             matriz con los valores para los modelos
+/////////////////////////////////////////////////////
 
 function PloteaTodo(dMatrizDatos, dXs)
     clf();
