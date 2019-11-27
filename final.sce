@@ -556,7 +556,7 @@ if cContinuar == "s" | cContinuar == "S" then
         end
     end
     csvWrite(dMatrizSalida, pwd() + "\" + sArchivo + ".csv");
-    mprintf("Se han guardado los datos en %s\n\n.", pwd() + "\" + sArchivo + ".csv");
+    mprintf("Se han guardado los datos en %s.\n\n", pwd() + "\" + sArchivo + ".csv");
 end
 mprintf("Gracias por usar el programa.");
 
