@@ -1,7 +1,7 @@
 clear
 ///////////////////////////////////////////////////////
 //   Final.sce
-// 
+//
 //   Este proyecto genera las siguientes 4
 //   regresiones para un conjunto de pares de
 //   valores independientes y dependientes:
@@ -10,7 +10,7 @@ clear
 //   * Cuadrática
 //   * Exponecial
 //   * Potencial
-// 
+//
 //   y propone cuál es el mejor modelo generado
 //   para generar predicciones de datos futuros,
 //   además de indicar posibles datos atípicos
@@ -18,7 +18,7 @@ clear
 //   de los modelos evaluados entre un límite inferior
 //   y superior dependiendo de la regresión
 //   seleccionada por el usuario
-// 
+//
 //   Ernesto Garcia -- A00820783
 //   Santiago Díaz -- A01252554
 //   11 / NOV / 19    version 1.0
@@ -31,11 +31,10 @@ clear
 //  del método de montante
 //
 //   Parametros:
-//      dMatrix      cantidad de renglones de la matriz
-//   Regreza
-//      dX           matriz con los resultados del sistema de ecuaciones
+//      dMatrix      matriz que contiene el sistema de ecuaciones
+//   Regresa:
+//      dX           vector solución del sistema de ecuaciones
 /////////////////////////////////////////////////////
-
 function dX = Montante(dMatrix)
     iRows = size(dMatrix)(1);
     iCols = size(dMatrix)(2);
@@ -73,7 +72,7 @@ endfunction
 //   Parametros:
 //      sArchivo   nombre del archivo
 //   Regresa:
-//      dMatriz     matriz resultado con los valores del archivo 
+//      dMatriz     matriz resultado con los valores del archivo
 /////////////////////////////////////////////////////
 function dMatriz = ObtenerDatos(sArchivo)
     hojasExcel = readxls(sArchivo + ".xls");
@@ -288,7 +287,7 @@ function dValoresAtipicos = Atipicos(dMatrizDatos, sRegresion, dX)
         for iI = 1 : iN
             dErroresCuadrados(iI) = (dMatrizDatos(iI, 2) - (dX(1) + dX(2) * dMatrizDatos(iI, 1))) ^ 2;
         end
-    elseif sRegresion == "cuadrática" | sRegresion == "c" then
+    elseif sRegresion == "cuadratica" | sRegresion == "c" then
         for iI = 1 : iN
             dErroresCuadrados(iI) = (dMatrizDatos(iI, 2) - (dX(1) + dX(2) * dMatrizDatos(iI, 1) + dX(3) * dMatrizDatos(iI, 1) ^ 2)) ^ 2;
         end
@@ -367,7 +366,7 @@ endfunction
 //      sMejorModelo    string con el nombre del mejor modelo
 /////////////////////////////////////////////////////
 function sMejorModelo = MejorModelo(dR2)
-    sRegresiones = ["lineal", "cuadrática", "exponencial", "potencial"];
+    sRegresiones = ["lineal", "cuadratica", "exponencial", "potencial"];
     [m, k] = max(dR2);
     sMejorModelo = sRegresiones(k);
 endfunction
@@ -392,7 +391,7 @@ function dY = EvaluarRegresion(sRegresion, dA, dX)
         for iI = 1 : length(dX)
             dY(iI) = dA(1) + dA(2) * dX(iI);
         end
-    elseif sRegresion == "cuadrática" | sRegresion == "c" then
+    elseif sRegresion == "cuadratica" | sRegresion == "c" then
         for iI = 1 : length(dX)
             dY(iI) = dA(1) + dA(2) * dX(iI) + dA(3) * dX(iI) ^ 2;
         end
@@ -436,7 +435,7 @@ function PloteaTodo(dMatrizDatos, dXs)
     ymax = dOrdenadosY(length(dOrdenadosY)) + dSepPromY;
     dValoresX = xmin : dSepPromX / 10 : xmax;
     plot2d(dValoresX, [EvaluarRegresion("l", dXs(1), dValoresX), EvaluarRegresion("c", dXs(2), dValoresX), EvaluarRegresion("e", dXs(3), dValoresX), EvaluarRegresion("p", dXs(4), dValoresX)], style=[5, 3, 2, 6]);
-    legend(["Datos", "Lineal", "Cuadrática", "Exponencial", "Potencial"]);
+    legend(["Datos", "Lineal", "Cuadratica", "Exponencial", "Potencial"]);
     zoom_rect([xmin, ymin, xmax, ymax]);
     xgrid(1, 1, 7);
 endfunction
@@ -457,16 +456,17 @@ endfunction
 //      dAEvaluar   valores del modelo a evaluar
 /////////////////////////////////////////////////////
 function creaArchivoSalida(sArchivo, sRegresion, dLimInf, dLimSup, dPaso, dAEvaluar)
-  dI = dLimInf;
-  iI = 1;
-  while dI <= dLimSup
-      dMatrizSalida(iI, 1) = dI;
-      dMatrizSalida(iI, 2) = EvaluarRegresion(sRegresion, dAEvaluar, dI);
-      dI = dI + dPaso;
-      iI = iI + 1;
-  end
-  csvWrite(dMatrizSalida, pwd() + "\" + sArchivo + ".csv");
-  mprintf("Se han guardado los datos en %s.\n\n", pwd() + "\" + sArchivo + ".csv");
+    dMatrizSalida = 0;
+    dI = dLimInf;
+    iI = 1;
+    while dI <= dLimSup
+        dMatrizSalida(iI, 1) = dI;
+        dMatrizSalida(iI, 2) = EvaluarRegresion(sRegresion, dAEvaluar, dI);
+        dI = dI + dPaso;
+        iI = iI + 1;
+    end
+    csvWrite(dMatrizSalida, pwd() + "\" + sArchivo + ".csv");
+    mprintf("Se han guardado los datos en %s.\n\n", pwd() + "\" + sArchivo + ".csv");
 endfunction
 
 ///////////////////////////////////////////////////////////////////////////
@@ -493,7 +493,7 @@ dR2P = R2(dMatrizDatos, "p", dXP);
 mprintf("I) Modelos:\n\n");
 mprintf("\t- Lineal      :   y = (%f) + (%f) * x\n", dXL(1), dXL(2));
 mprintf("\t                  r^2 = %f\n\n", dR2L);
-mprintf("\t- Cuadrática  :   y = (%f) + (%f) * x + (%f) * x^2\n", dXC(1), dXC(2), dXC(3));
+mprintf("\t- cuadratica  :   y = (%f) + (%f) * x + (%f) * x^2\n", dXC(1), dXC(2), dXC(3));
 mprintf("\t                  r^2 = %f\n\n", dR2C);
 mprintf("\t- Exponencial :   y = (%f) * e ^ ((%f) * x)\n", dXE(1), dXE(2));
 mprintf("\t                  r^2 = %f\n\n", dR2E);
@@ -505,7 +505,7 @@ sMejorModelo = MejorModelo([dR2L, dR2C, dR2E, dR2P]);
 mprintf("\t- El mejor modelo será la %s, con una r^2 de %f\n\n", sMejorModelo, max([dR2L, dR2C, dR2E, dR2P]));
 mprintf("\t- Usando cada modelo, los valores estimados para x = %f serán:\n\n", dValorAEstimar);
 mprintf("\t\t- Lineal      :   %f\n\n", EvaluarRegresion("l", dXL, dValorAEstimar));
-mprintf("\t\t- Cuadrática  :   %f\n\n", EvaluarRegresion("c", dXC, dValorAEstimar));
+mprintf("\t\t- cuadratica  :   %f\n\n", EvaluarRegresion("c", dXC, dValorAEstimar));
 mprintf("\t\t- Exponencial :   %f\n\n", EvaluarRegresion("e", dXE, dValorAEstimar));
 mprintf("\t\t- Potencial   :   %f\n\n", EvaluarRegresion("p", dXP, dValorAEstimar));
 
@@ -513,7 +513,7 @@ PloteaTodo(dMatrizDatos, list(dXL, dXC, dXE, dXP));
 
 if sMejorModelo == "lineal" then
     dValoresAtipicos = Atipicos(dMatrizDatos, "l", dXL);
-elseif sMejorModelo == "cuadrática" then
+elseif sMejorModelo == "cuadratica" then
     dValoresAtipicos = Atipicos(dMatrizDatos, "c", dXC);
 elseif sMejorModelo == "exponencial" then
     dValoresAtipicos = Atipicos(dMatrizDatos, "e", dXE);
@@ -541,13 +541,13 @@ if cContinuar == "s" | cContinuar == "S" then
     dPaso = input("        - Ingrese el tamaño del paso: ");
 
     if sRegresion == "lineal" | sRegresion == "l" then
-      dAEvaluar = dxL;
+      dAEvaluar = dXL;
     elseif sRegresion == "cuadratica" | sRegresion == "c" then
-      dAEvaluar = dxC;
+      dAEvaluar = dXC;
     elseif sRegresion == "exponencial" | sRegresion == "e" then
-      dAEvaluar = dxE;
-    elseif sRegresion == "potencial" | sRegresion == "p" then 
-      dAEvaluar = dxP;
+      dAEvaluar = dXE;
+    elseif sRegresion == "potencial" | sRegresion == "p" then
+      dAEvaluar = dXP;
     end
 
     creaArchivoSalida(sArchivo, sRegresion, dLimInf, dLimSup, dPaso, dAEvaluar);
